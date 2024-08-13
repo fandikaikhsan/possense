@@ -21,18 +21,24 @@ const SuggestionCard = ({
 
   return (
     <div
-      className={`flex-shrink-0 w-64 bg-gray-800 shadow-md rounded-lg p-4 mr-4 border-t-4 ${
+      className={`flex flex-col flex-shrink-0 w-72 bg-gray-800 shadow-md rounded-lg p-4 mr-4 justify-between border-t-4 ${
         colorMap[category] || "border-gray-500"
       }`}
     >
-      <h3 className="text-lg font-semibold mb-2 text-white">{title}</h3>
-      <CategoryBadge category={category} />
-      <p className="text-sm text-gray-400 my-4">{description}</p>
-      <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-gray-400">
-          Potential Improvement
-        </span>
-        <span className="text-lg font-bold text-green-400">{percentage}%</span>
+      <div>
+        <h3 className="text-lg font-semibold mb-2 text-white">{title}</h3>
+        <CategoryBadge category={category} />
+      </div>
+      <div>
+        <p className="text-sm text-gray-400 my-4">{description}</p>
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium text-gray-400">
+            Potential Improvement
+          </span>
+          <span className="text-lg font-bold text-green-400">
+            {percentage}%
+          </span>
+        </div>
       </div>
     </div>
   )
