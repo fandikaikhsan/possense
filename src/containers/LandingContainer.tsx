@@ -42,8 +42,8 @@ const LandingPage = () => {
           transition={{ duration: 0.5, delay: 0.4 }}
           className="text-xl mb-8"
         >
-          Empower your cafe with AI-powered analytics to boost sales and delight
-          customers
+          Empower your business with AI-powered analytics to boost sales and
+          delight customers
         </motion.p>
         <Link href="/dashboard">
           <motion.button
@@ -62,7 +62,7 @@ const LandingPage = () => {
             {
               title: "Real-time Analytics",
               description:
-                "Get instant insights into your cafe's performance with our dynamic dashboard.",
+                "Get instant insights into your business's performance with our dynamic dashboard.",
               icon: "📊",
             },
             {
