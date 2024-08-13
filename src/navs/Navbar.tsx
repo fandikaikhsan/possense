@@ -7,7 +7,7 @@ import { motion } from "framer-motion"
 import { FiMenu, FiX, FiHome, FiBox, FiLogIn, FiLogOut } from "react-icons/fi"
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(true)
+  const [isOpen, setIsOpen] = useState(false)
   const pathName = usePathname()
   const [isLoggedIn, setIsLoggedIn] = useState(false) // This should be managed by your auth system
 
@@ -70,7 +70,7 @@ const Navbar = () => {
 
       {/* Desktop Navbar */}
       <motion.nav
-        initial={{ x: 300 }}
+        initial={{ x: 200 }}
         animate={{ x: isOpen ? 0 : 200 }}
         className="hidden md:block fixed top-0 right-0 h-full bg-gray-900 text-white z-50 w-64 transition-all duration-300"
       >
