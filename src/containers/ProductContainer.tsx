@@ -71,7 +71,7 @@ const ProductContainer = () => {
 
   return (
     <div className="container mx-auto p-4 bg-gray-900 text-white">
-      <h1 className="text-3xl font-bold mb-6">Cafe Product Insights</h1>
+      <h1 className="text-3xl font-bold mb-6">Product Insights</h1>
 
       <div className="mb-6">
         <select
