@@ -109,8 +109,8 @@ const LandingPage = () => {
           className="bg-gray-800 p-6 rounded-lg max-w-2xl mx-auto"
         >
           <p className="text-lg italic mb-4">
-            "POS Sense has transformed our business. We've seen a 20% increase
-            in sales and our customers love our new menu items!"
+            &quot;POS Sense has transformed our business. We&apos;ve seen a 20%
+            increase in sales and our customers love our new menu items!&quot;
           </p>
           <p className="font-bold">- Akbar, Owner of Kopi Santai.</p>
         </motion.div>
