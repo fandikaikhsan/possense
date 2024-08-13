@@ -37,3 +37,5 @@ const SuggestionCard = ({
     </div>
   )
 }
+
+export default SuggestionCard
