@@ -1,9 +1,9 @@
-import DashboardContainer from "@/containers/DashboardContainer"
+import LandingContainer from "@/containers/LandingContainer"
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen bg-gray-900 flex-col items-center justify-between p-5 lg:p-10">
-      <DashboardContainer />
+    <div className="flex min-h-screen bg-gray-900 flex-col items-center justify-between">
+      <LandingContainer />
     </div>
   )
 }
