@@ -124,7 +124,7 @@ const DashboardContainer = () => {
   }
 
   return (
-    <div className="container mx-auto p-4 bg-gray-900 text-white">
+    <div className="container mx-auto lg:p-4 bg-gray-900 text-white">
       <h1 className="text-3xl font-bold mb-6">POS Sense</h1>
 
       <div className="mb-6">
@@ -159,6 +159,51 @@ const DashboardContainer = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+        <Card>
+          <CardHeader>
+            <CardTitle>Today&apos;s Sales</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <SalesInfoCard
+                title="Total Sales"
+                value={`$${analysis.todaySales.total.toLocaleString()}`}
+                color="text-green-400"
+              />
+              <SalesInfoCard
+                title="Total Quantity"
+                value={analysis.todaySales.quantity.toLocaleString()}
+                color="text-blue-400"
+              />
+              <SalesInfoCard
+                title="Top Selling Product"
+                value={analysis.todaySales.topSelling}
+                color="text-purple-400"
+              />
+              <SalesInfoCard
+                title="Least Favorite Product"
+                value={analysis.todaySales.leastFavorite}
+                color="text-red-400"
+              />
+            </div>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={analysis.todaySales.hourlyData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                  <XAxis dataKey="hour" stroke="#9CA3AF" />
+                  <YAxis stroke="#9CA3AF" />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "#1F2937",
+                      border: "none",
+                    }}
+                  />
+                  <Bar dataKey="sales" fill="#10B981" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
         <Card>
           <CardHeader>
             <CardTitle>Monthly Sales Overview</CardTitle>
@@ -205,52 +250,6 @@ const DashboardContainer = () => {
                     strokeWidth={2}
                   />
                 </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Today&apos;s Sales</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <SalesInfoCard
-                title="Total Sales"
-                value={`$${analysis.todaySales.total.toLocaleString()}`}
-                color="text-green-400"
-              />
-              <SalesInfoCard
-                title="Total Quantity"
-                value={analysis.todaySales.quantity.toLocaleString()}
-                color="text-blue-400"
-              />
-              <SalesInfoCard
-                title="Top Selling Product"
-                value={analysis.todaySales.topSelling}
-                color="text-purple-400"
-              />
-              <SalesInfoCard
-                title="Least Favorite Product"
-                value={analysis.todaySales.leastFavorite}
-                color="text-red-400"
-              />
-            </div>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={analysis.todaySales.hourlyData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                  <XAxis dataKey="hour" stroke="#9CA3AF" />
-                  <YAxis stroke="#9CA3AF" />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "#1F2937",
-                      border: "none",
-                    }}
-                  />
-                  <Bar dataKey="sales" fill="#10B981" />
-                </BarChart>
               </ResponsiveContainer>
             </div>
           </CardContent>
