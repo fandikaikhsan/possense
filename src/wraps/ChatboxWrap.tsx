@@ -146,11 +146,11 @@ const AIChatBox: React.FC = () => {
             }`}
           >
             {message.isUser ? (
-              <div className="max-w-sm p-3 rounded-lg bg-blue-500 text-white">
+              <div className="text-sm max-w-sm p-3 rounded-lg bg-blue-500 text-white">
                 {message.text}
               </div>
             ) : (
-              <div className="w-full p-8 rounded-lg bg-gray-900">
+              <div className="text-sm p-8 w-[80%] xl:w-[60%] rounded-lg bg-gray-900">
                 <h3 className="font-bold mb-2">Summary:</h3>
                 <ul className="list-disc pl-5 mb-5">
                   {message.response.summary.map((point: string, i: number) => (
@@ -183,7 +183,7 @@ const AIChatBox: React.FC = () => {
           </div>
         ))}
         {isTyping && (
-          <div className="flex justify-start">
+          <div className="text-sm flex justify-start w-[80%] xl:w-[60%]">
             <div className="w-full p-5 rounded-lg bg-gray-900">
               <h3 className="font-bold mb-2">Summary:</h3>
               <ul className="list-disc pl-5 mb-3">
@@ -232,7 +232,7 @@ const AIChatBox: React.FC = () => {
           <button
             key={index}
             onClick={() => handleSend(question)}
-            className="px-4 py-3 bg-gray-800 rounded-full text-sm hover:bg-gray-900 transition-colors"
+            className="px-4 py-3 text-xs bg-gray-800 rounded-lg hover:bg-gray-900 transition-colors"
           >
             {question}
           </button>
@@ -245,11 +245,11 @@ const AIChatBox: React.FC = () => {
           onChange={(e) => setInputText(e.target.value)}
           onKeyPress={(e) => e.key === "Enter" && handleSend(inputText)}
           placeholder="Type your message..."
-          className="flex-1 p-2 rounded-l-lg border-2 border-r-0 border-gray-300 focus:outline-none focus:border-blue-500"
+          className="flex-1 p-2 bg-gray-200 rounded-l-lg border-2 border-r-0 border-gray-300 focus:outline-none focus:border-blue-500"
         />
         <button
           onClick={() => handleSend(inputText)}
-          className="bg-blue-500 text-white p-2 rounded-r-lg hover:bg-blue-600 transition-colors"
+          className="bg-blue-500 h-full text-white p-2 rounded-r-lg hover:bg-blue-600 transition-colors"
         >
           <Send size={20} />
         </button>
