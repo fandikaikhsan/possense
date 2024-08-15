@@ -15,12 +15,12 @@ const AiSuggestionTip = ({ suggestion, onSave }: AiSuggestionProps) => (
       <PriorityBadge priority={suggestion.priority} />
     </div>
     <p className="text-sm mb-4">{suggestion.description}</p>
-    <button
+    {/* <button
       onClick={() => onSave(suggestion)}
       className="w-full bg-black text-white py-2 px-4 rounded hover:bg-gray-800 transition duration-200"
     >
       Add To Backlog
-    </button>
+    </button> */}
   </div>
 )
 
