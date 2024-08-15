@@ -16,6 +16,13 @@ import {
 import SalesInfoCard from "@/cards/SalesInfoCard"
 import SuggestionCard from "@/cards/SuggestionCard"
 import Chatbox from "@/wraps/ChatboxWrap"
+import AiSuggestionTip from "@/commons/AISuggestionTip"
+import CustomBar from "@/commons/CustomBar"
+import {
+  topSellingProductsConstant,
+  suggestionsConstant,
+} from "@/constants/ProductConstant"
+import MetricItem from "@/commons/MetricItem"
 
 const Upload = () => (
   <svg
@@ -44,18 +51,31 @@ const CardHeader = ({ children }: { children: React.ReactNode }) => (
 )
 
 const CardTitle = ({ children }: { children: React.ReactNode }) => (
-  <h2 className="text-xl font-semibold text-white">{children}</h2>
+  <h2 className="text-lg font-semibold text-white">{children}</h2>
 )
 
 const CardContent = ({ children }: { children: React.ReactNode }) => (
   <div>{children}</div>
 )
 
+type SuggestionProps = {
+  priority: string
+  description: string
+}
+
 const DashboardContainer = () => {
   const [file, setFile] = useState<File | null>(null)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [uploadComplete, setUploadComplete] = useState(false)
   const [analyzeFile, setAnalyzeFile] = useState(false)
+  const [savedSuggestions, setSavedSuggestions] = useState<SuggestionProps[]>(
+    []
+  )
+
+  const saveSuggestion = (suggestion: SuggestionProps) => {
+    setSavedSuggestions([...savedSuggestions, suggestion])
+    console.log("Saved suggestion:", suggestion)
+  }
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const uploadedFile = event.target.files?.[0]
@@ -225,7 +245,91 @@ const DashboardContainer = () => {
       {analyzeFile && (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-            <Card>
+            <div className="flex flex-col justify-between bg-gray-800 shadow-md rounded-lg p-6">
+              <div className="mb-10">
+                <CardHeader>
+                  <CardTitle>Summary</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <MetricItem
+                      title="Total Sold Items"
+                      value="1,650"
+                      change={2}
+                    />
+                    <MetricItem
+                      title="Total Sales"
+                      value="$12,345"
+                      change={5}
+                    />
+                    <MetricItem
+                      title="Avg Ticket Size"
+                      value="$8.50"
+                      change={1}
+                    />
+                    <MetricItem title="Best Seller" value="Latte" change={17} />
+                  </div>
+                </CardContent>
+              </div>
+              <div className="">
+                <CardHeader>
+                  <CardTitle>Top Selling Products</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={topSellingProductsConstant}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                        <XAxis dataKey="name" stroke="#9CA3AF" />
+                        <YAxis stroke="#9CA3AF" />
+                        <Tooltip
+                          content={({ active, payload }) => {
+                            if (active && payload && payload.length) {
+                              const data = payload[0].payload
+                              if (
+                                data.name === "Latte" ||
+                                data.name === "Muffin"
+                              ) {
+                                return (
+                                  <AiSuggestionTip
+                                    suggestion={
+                                      data.name === "Latte"
+                                        ? suggestionsConstant.topProduct
+                                        : suggestionsConstant.lowestProduct
+                                    }
+                                    onSave={saveSuggestion}
+                                  />
+                                )
+                              }
+                            }
+                            return null
+                          }}
+                        />
+                        <Bar
+                          dataKey="sales"
+                          shape={(props: any) => {
+                            const { x, y, width, height, payload } = props
+                            return (
+                              <CustomBar
+                                x={x}
+                                y={y}
+                                width={width}
+                                height={height}
+                                hasSuggestion={
+                                  payload.name === "Latte" ||
+                                  payload.name === "Muffin"
+                                }
+                              />
+                            )
+                          }}
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </div>
+            </div>
+            {/* <Card>
               <CardHeader>
                 <CardTitle>Today&apos;s Sales</CardTitle>
               </CardHeader>
@@ -269,13 +373,13 @@ const DashboardContainer = () => {
                   </ResponsiveContainer>
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
             <Card>
               <CardHeader>
                 <CardTitle>Monthly Sales Overview</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="grid grid-cols-2 gap-4 mb-8">
                   <SalesInfoCard
                     title="Total Sales"
                     value={`$${analysis.monthlySales.total.toLocaleString()}`}
@@ -325,26 +429,26 @@ const DashboardContainer = () => {
             <CardTitle>Ask Your Assistance</CardTitle>
             <Chatbox />
           </div>
+          <div className="mt-10 mb-6">
+            <h2 className="text-2xl font-semibold mb-6 text-white">
+              Improvement Suggestions
+            </h2>
+            <div className="overflow-x-auto">
+              <div className="flex pb-4">
+                {analysis.suggestions.map((suggestion, index) => (
+                  <SuggestionCard
+                    key={index}
+                    title={suggestion.title}
+                    category={suggestion.category}
+                    description={suggestion.description}
+                    percentage={suggestion.percentage}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
         </>
       )}
-      <div className="mt-10 mb-6">
-        <h2 className="text-2xl font-semibold mb-6 text-white">
-          Improvement Suggestions
-        </h2>
-        <div className="overflow-x-auto">
-          <div className="flex pb-4">
-            {analysis.suggestions.map((suggestion, index) => (
-              <SuggestionCard
-                key={index}
-                title={suggestion.title}
-                category={suggestion.category}
-                description={suggestion.description}
-                percentage={suggestion.percentage}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
     </div>
   )
 }
