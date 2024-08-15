@@ -241,15 +241,16 @@ const AIChatBox: React.FC = () => {
       <div className="flex items-center">
         <input
           type="text"
+          disabled={true}
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
           onKeyPress={(e) => e.key === "Enter" && handleSend(inputText)}
-          placeholder="Type your message..."
-          className="flex-1 p-2 bg-gray-200 rounded-l-lg border-2 border-r-0 border-gray-300 focus:outline-none focus:border-blue-500"
+          placeholder="Type your message... (disabled)"
+          className="flex-1 p-2 bg-gray-400 placeholder-gray-500 text-black rounded-l-lg focus:outline-none focus:border-blue-500"
         />
         <button
           onClick={() => handleSend(inputText)}
-          className="bg-blue-500 h-full text-white p-2 rounded-r-lg hover:bg-blue-600 transition-colors"
+          className="bg-gray-300 h-full text-gray-400 p-2 rounded-r-lg hover:bg-blue-600 transition-colors"
         >
           <Send size={20} />
         </button>
