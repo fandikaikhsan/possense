@@ -217,7 +217,7 @@ const DashboardContainer = () => {
                   </button>
 
                   <button
-                    className="bg-blue-500 text-white px-4 py-2 text-xs rounded-lg ml-2"
+                    className="bg-blue-500 text-white px-4 py-2 text-xs rounded-lg"
                     onClick={() => setAnalyzeFile(true)}
                   >
                     Analyze File
@@ -379,7 +379,7 @@ const DashboardContainer = () => {
                 <CardTitle>Monthly Sales Overview</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 gap-4 mb-8">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                   <SalesInfoCard
                     title="Total Sales"
                     value={`$${analysis.monthlySales.total.toLocaleString()}`}

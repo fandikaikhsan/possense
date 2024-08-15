@@ -11,6 +11,8 @@ import {
   ResponsiveContainer,
 } from "recharts"
 
+import { TypeAnimation } from "react-type-animation"
+
 // Dummy data for AI responses
 const dummyResponses = [
   {
@@ -155,6 +157,13 @@ const AIChatBox: React.FC = () => {
         ref={chatContainerRef}
         className="flex-1 overflow-y-auto mb-4 space-y-4 scroll-smooth"
       >
+        <div className="text-sm p-8 w-[80%] xl:w-[60%] rounded-lg bg-gray-900 flex flex-row gap-2">
+          <TypeAnimation
+            cursor={false}
+            sequence={["Hello! How can I help you with the data?"]}
+            repeat={1}
+          />
+        </div>
         {messages.map((message, index) => (
           <div
             key={index}
