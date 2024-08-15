@@ -15,6 +15,7 @@ import {
 
 import SalesInfoCard from "@/cards/SalesInfoCard"
 import SuggestionCard from "@/cards/SuggestionCard"
+import Chatbox from "@/wraps/ChatboxWrap"
 
 const Upload = () => (
   <svg
@@ -52,6 +53,32 @@ const CardContent = ({ children }: { children: React.ReactNode }) => (
 
 const DashboardContainer = () => {
   const [file, setFile] = useState<File | null>(null)
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const [uploadComplete, setUploadComplete] = useState(false)
+  const [analyzeFile, setAnalyzeFile] = useState(false)
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const uploadedFile = event.target.files?.[0]
+    if (uploadedFile) {
+      setFile(uploadedFile)
+      simulateUpload()
+    }
+  }
+
+  const simulateUpload = () => {
+    setUploadProgress(0)
+    const interval = setInterval(() => {
+      setUploadProgress((prevProgress) => {
+        if (prevProgress >= 100) {
+          clearInterval(interval)
+          setUploadComplete(true)
+          return 100
+        }
+        return prevProgress + 10
+      })
+    }, 500)
+  }
+
   const [analysis, setAnalysis] = useState({
     totalSales: 150000,
     averageOrderValue: 75,
@@ -116,13 +143,6 @@ const DashboardContainer = () => {
     ],
   })
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const uploadedFile = event.target.files?.[0]
-    if (uploadedFile) {
-      setFile(uploadedFile)
-    }
-  }
-
   return (
     <div className="container mx-auto lg:p-4 bg-gray-900 text-white">
       <h1 className="text-3xl font-bold mb-6">POS Sense</h1>
@@ -135,129 +155,180 @@ const DashboardContainer = () => {
           Upload POS Spreadsheet (CSV)
         </label>
         <div className="flex items-center justify-center w-full">
-          <label
-            htmlFor="file_input"
-            className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-600 border-dashed rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700"
-          >
-            <div className="flex flex-col items-center justify-center pt-5 pb-6">
-              <Upload />
-              <p className="mb-2 text-sm text-gray-400">
-                <span className="font-semibold">Click to upload</span> or drag
-                and drop
-              </p>
-              <p className="text-xs text-gray-500">CSV file (MAX. 10MB)</p>
+          {!file ? (
+            <label
+              htmlFor="file_input"
+              className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-600 border-dashed rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700"
+            >
+              <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                <Upload />
+                <p className="mb-2 text-sm text-gray-400">
+                  <span className="font-semibold">Click to upload</span> or drag
+                  and drop
+                </p>
+                <p className="text-xs text-gray-500">CSV file (MAX. 10MB)</p>
+              </div>
+              <input
+                id="file_input"
+                type="file"
+                className="hidden"
+                accept=".csv"
+                onChange={handleFileUpload}
+              />
+            </label>
+          ) : uploadComplete && file ? (
+            <div className="w-full">
+              <Card>
+                <CardHeader>
+                  <CardTitle>File Uploaded</CardTitle>
+                  <div className="text-sm text-gray-400">{file.name}</div>
+                </CardHeader>
+                <div className="flex flex-col gap-2 md:flex-row md:justify-start justify-center">
+                  <button
+                    className="bg-green-500 text-white px-4 py-2 text-xs rounded-lg"
+                    onClick={() => {
+                      setFile(null)
+                      setUploadComplete(false)
+                      setUploadProgress(0)
+                      setAnalyzeFile(false)
+                    }}
+                  >
+                    Upload Another File
+                  </button>
+
+                  <button
+                    className="bg-blue-500 text-white px-4 py-2 text-xs rounded-lg ml-2"
+                    onClick={() => setAnalyzeFile(true)}
+                  >
+                    Analyze File
+                  </button>
+                </div>
+              </Card>
             </div>
-            <input
-              id="file_input"
-              type="file"
-              className="hidden"
-              accept=".csv"
-              onChange={handleFileUpload}
-            />
-          </label>
+          ) : (
+            <div className="w-full">
+              <Card>
+                <p className="mb-2">Uploading: {file.name}</p>
+                <div className="w-full bg-gray-700 rounded-full h-2.5">
+                  <div
+                    className="bg-blue-600 h-2.5 rounded-full"
+                    style={{ width: `${uploadProgress}%` }}
+                  ></div>
+                </div>
+                <p className="mt-2">{uploadProgress}% uploaded</p>
+              </Card>
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-        <Card>
-          <CardHeader>
-            <CardTitle>Today&apos;s Sales</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <SalesInfoCard
-                title="Total Sales"
-                value={`$${analysis.todaySales.total.toLocaleString()}`}
-                color="text-green-400"
-              />
-              <SalesInfoCard
-                title="Total Quantity"
-                value={analysis.todaySales.quantity.toLocaleString()}
-                color="text-blue-400"
-              />
-              <SalesInfoCard
-                title="Top Selling Product"
-                value={analysis.todaySales.topSelling}
-                color="text-purple-400"
-              />
-              <SalesInfoCard
-                title="Least Favorite Product"
-                value={analysis.todaySales.leastFavorite}
-                color="text-red-400"
-              />
-            </div>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={analysis.todaySales.hourlyData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                  <XAxis dataKey="hour" stroke="#9CA3AF" />
-                  <YAxis stroke="#9CA3AF" />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "#1F2937",
-                      border: "none",
-                    }}
+      {analyzeFile && (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+            <Card>
+              <CardHeader>
+                <CardTitle>Today&apos;s Sales</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <SalesInfoCard
+                    title="Total Sales"
+                    value={`$${analysis.todaySales.total.toLocaleString()}`}
+                    color="text-green-400"
                   />
-                  <Bar dataKey="sales" fill="#10B981" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Monthly Sales Overview</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <SalesInfoCard
-                title="Total Sales"
-                value={`$${analysis.monthlySales.total.toLocaleString()}`}
-                color="text-green-400"
-              />
-              <SalesInfoCard
-                title="Total Quantity"
-                value={analysis.monthlySales.quantity.toLocaleString()}
-                color="text-blue-400"
-              />
-              <SalesInfoCard
-                title="Top Selling Product"
-                value={analysis.monthlySales.topSelling}
-                color="text-purple-400"
-              />
-              <SalesInfoCard
-                title="Least Favorite Product"
-                value={analysis.monthlySales.leastFavorite}
-                color="text-red-400"
-              />
-            </div>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={analysis.monthlySales.data}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                  <XAxis dataKey="name" stroke="#9CA3AF" />
-                  <YAxis stroke="#9CA3AF" />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "#1F2937",
-                      border: "none",
-                    }}
+                  <SalesInfoCard
+                    title="Total Quantity"
+                    value={analysis.todaySales.quantity.toLocaleString()}
+                    color="text-blue-400"
                   />
-                  <Line
-                    type="monotone"
-                    dataKey="sales"
-                    stroke="#10B981"
-                    strokeWidth={2}
+                  <SalesInfoCard
+                    title="Top Selling Product"
+                    value={analysis.todaySales.topSelling}
+                    color="text-purple-400"
                   />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="mb-6">
-        <h2 className="text-2xl font-semibold mb-8 text-white">
+                  <SalesInfoCard
+                    title="Least Favorite Product"
+                    value={analysis.todaySales.leastFavorite}
+                    color="text-red-400"
+                  />
+                </div>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={analysis.todaySales.hourlyData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                      <XAxis dataKey="hour" stroke="#9CA3AF" />
+                      <YAxis stroke="#9CA3AF" />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: "#1F2937",
+                          border: "none",
+                        }}
+                      />
+                      <Bar dataKey="sales" fill="#10B981" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Monthly Sales Overview</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <SalesInfoCard
+                    title="Total Sales"
+                    value={`$${analysis.monthlySales.total.toLocaleString()}`}
+                    color="text-green-400"
+                  />
+                  <SalesInfoCard
+                    title="Total Quantity"
+                    value={analysis.monthlySales.quantity.toLocaleString()}
+                    color="text-blue-400"
+                  />
+                  <SalesInfoCard
+                    title="Top Selling Product"
+                    value={analysis.monthlySales.topSelling}
+                    color="text-purple-400"
+                  />
+                  <SalesInfoCard
+                    title="Least Favorite Product"
+                    value={analysis.monthlySales.leastFavorite}
+                    color="text-red-400"
+                  />
+                </div>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={analysis.monthlySales.data}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                      <XAxis dataKey="name" stroke="#9CA3AF" />
+                      <YAxis stroke="#9CA3AF" />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: "#1F2937",
+                          border: "none",
+                        }}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="sales"
+                        stroke="#10B981"
+                        strokeWidth={2}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          <div className="flex flex-col gap-3">
+            <CardTitle>Ask Your Assistance</CardTitle>
+            <Chatbox />
+          </div>
+        </>
+      )}
+      <div className="mt-10 mb-6">
+        <h2 className="text-2xl font-semibold mb-6 text-white">
           Improvement Suggestions
         </h2>
         <div className="overflow-x-auto">
