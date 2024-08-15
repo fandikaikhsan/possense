@@ -120,6 +120,19 @@ const AIChatBox: React.FC = () => {
     }, 50)
   }
 
+  const smoothScrollToBottom = () => {
+    if (chatContainerRef.current) {
+      const scrollHeight = chatContainerRef.current.scrollHeight
+      const height = chatContainerRef.current.clientHeight
+      const maxScrollTop = scrollHeight - height
+
+      chatContainerRef.current.scrollTo({
+        top: maxScrollTop,
+        behavior: "smooth",
+      })
+    }
+  }
+
   useEffect(() => {
     if (!isTyping) {
       setDisplayedResponse({ summary: [], keyInsight: "", graphData: [] })
@@ -132,11 +145,15 @@ const AIChatBox: React.FC = () => {
     }
   }, [messages, isTyping, displayedResponse])
 
+  useEffect(() => {
+    smoothScrollToBottom()
+  }, [messages, isTyping, displayedResponse])
+
   return (
-    <div className="flex flex-col h-[40rem] w-full mx-auto bg-gray-700 p-4">
+    <div className="flex flex-col h-[40rem] rounded-lg w-full mx-auto bg-gray-700 p-4">
       <div
         ref={chatContainerRef}
-        className="flex-1 overflow-y-auto mb-4 space-y-4"
+        className="flex-1 overflow-y-auto mb-4 space-y-4 scroll-smooth"
       >
         {messages.map((message, index) => (
           <div
@@ -168,7 +185,9 @@ const AIChatBox: React.FC = () => {
                         dataKey={Object.keys(message.response.graphData[0])[0]}
                       />
                       <YAxis />
-                      <Tooltip />
+                      <Tooltip
+                        contentStyle={{ backgroundColor: "rgba(0, 0, 0, 0.8)" }}
+                      />
                       <Legend />
                       <Line
                         type="monotone"
@@ -197,31 +216,14 @@ const AIChatBox: React.FC = () => {
                 <span className="animate-pulse">▋</span>
               </p>
               {displayedResponse.graphData.length > 0 && (
-                <>
-                  <h3 className="font-bold mb-2">Data Visualization:</h3>
-                  <div className="h-64 w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={displayedResponse.graphData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis
-                          dataKey={
-                            Object.keys(displayedResponse.graphData[0])[0]
-                          }
-                        />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Line
-                          type="monotone"
-                          dataKey={
-                            Object.keys(displayedResponse.graphData[0])[1]
-                          }
-                          stroke="#8884d8"
-                        />
-                      </LineChart>
-                    </ResponsiveContainer>
+                <div className="flex flex-col gap-2 justify-center items-center h-32 bg-gray-500 animate-pulse">
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-6 w-6 border-4 border-b-2 border-gray-900"></div>
                   </div>
-                </>
+                  <div className="text-gray-900 animate-pulse">
+                    Generating data visualization...
+                  </div>
+                </div>
               )}
             </div>
           </div>
